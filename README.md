@@ -1,147 +1,207 @@
-# Hospital QA System — Setup Guide
+# 🏥 Adaptive RAG for Hospital QA — MedBot
 
-## Project Structure
+An AI-powered multi-role hospital chatbot system built with React, Node.js, Python Flask, MongoDB, and the Anthropic Claude API. MedBot provides personalized, conversational answers to patients, doctors, and hospital administrators.
+
+---
+
+## 🌟 Features
+
+### 👤 Patient Portal
+- Personalized chatbot with full medical record access
+- Answers questions about appointments, medicines, lab results, procedures
+- Answers general hospital questions (visiting hours, booking, emergency)
+- File upload section for medical documents
+- Status tracking (Admitted, Under Treatment, Discharged, Follow-up)
+
+### 👨‍⚕️ Doctor Dashboard
+- Clinical AI assistant with access to all assigned patients
+- Patient list with expandable details (disease, treatment, appointments)
+- Answers: "How many patients?", "Who is admitted?", "Upcoming appointments?"
+- Department and qualification display
+
+### 🛡️ Admin Dashboard
+- Full system monitoring with live stats
+- Visual bar charts: patients by hospital, patients by status
+- Searchable tables for all doctors and patients
+- AI assistant for system-wide queries and analytics
+
+---
+
+## 🧠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React.js, Vite, React Router |
+| Backend API | Node.js, Express.js |
+| AI/RAG Pipeline | Python, Flask, Anthropic Claude API |
+| Database | MongoDB |
+| Styling | Custom CSS (dark theme) |
+
+---
+
+## 🗂️ Project Structure
 
 ```
-hospital-qa-rag-js/
-├── frontend/                   ← React + Vite
+hospital-qa/
+├── frontend/                    # React + Vite
 │   ├── src/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   ├── index.css
+│   │   ├── pages/
+│   │   │   ├── Home.jsx         # Landing page
+│   │   │   ├── Login.jsx        # Patient login
+│   │   │   ├── Registration.jsx # Patient registration
+│   │   │   ├── Patient.jsx      # Patient portal + chatbot
+│   │   │   ├── DoctorLogin.jsx  # Doctor login
+│   │   │   ├── Doctor.jsx       # Doctor dashboard + chatbot
+│   │   │   ├── AdminLogin.jsx   # Admin login
+│   │   │   └── AdminDashboard.jsx # Admin panel + chatbot
 │   │   ├── Context/
-│   │   │   └── AuthContext.jsx
-│   │   ├── Components/
-│   │   │   └── ProtectedRoute.jsx
-│   │   └── pages/
-│   │       ├── Home.jsx / Home.css
-│   │       ├── Login.jsx
-│   │       ├── Registration.jsx / Registration.css
-│   │       ├── Patient.jsx / Patient.css
-│   │       ├── DoctorLogin.jsx
-│   │       ├── Doctor.jsx / Doctor.css
-│   │       ├── AdminLogin.jsx
-│   │       ├── AdminDashboard.jsx / Admin.css
+│   │   │   └── AuthContext.jsx  # Auth state management
+│   │   └── Components/
+│   │       └── ProtectedRoute.jsx
 │   └── .env
 ├── backend/
-│   ├── backend-node/
-│   │   ├── server.js           ← Express API
-│   │   ├── seed_db.js          ← DB seeder (run once)
-│   │   ├── package.json
+│   ├── backend-node/            # Express API
+│   │   ├── server.js            # All API routes
+│   │   ├── seed_db.js           # Database seeder
 │   │   └── .env
-│   └── backend-python/
-│       ├── rag_pipeline.py     ← Flask + FAISS + Flan-T5
+│   └── backend-python/          # Flask RAG pipeline
+│       ├── rag_pipeline.py      # AI chatbot logic
 │       └── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Prerequisites
+## ⚙️ Setup & Installation
 
+### Prerequisites
 - Node.js v18+
 - Python 3.9+
 - MongoDB (running locally)
 
----
-
-## Step 1 — Start MongoDB
-
+### Step 1 — Clone the repository
 ```bash
-mongod
+git clone https://github.com/navya-oss/Adaptive-RAG-for-Hospital-QA.git
+cd Adaptive-RAG-for-Hospital-QA
 ```
 
----
+### Step 2 — Set up environment variables
 
-## Step 2 — Seed the Database (run ONCE)
+**`backend/backend-node/.env`**
+```
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/
+FLASK_URL=http://127.0.0.1:5001
+```
 
+**`backend/backend-python/.env`**
+```
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
+MONGO_URI=mongodb://localhost:27017/
+```
+
+**`frontend/.env`**
+```
+VITE_API_URL=http://localhost:5000
+```
+
+### Step 3 — Seed the database (run once)
 ```bash
 cd backend/backend-node
 npm install
 node seed_db.js
 ```
 
-This inserts all 20 patients, 5 doctors, and 1 admin.
+### Step 4 — Start all services
 
----
+Open 4 separate terminals:
 
-## Step 3 — Start Node Backend
-
+**Terminal 1 — MongoDB**
 ```bash
-cd backend/backend-node
-npm start
-# Runs on http://localhost:5000
+mongod
 ```
 
----
+**Terminal 2 — Node Backend**
+```bash
+cd backend/backend-node
+node server.js
+```
 
-## Step 4 — Start Python RAG Backend
-
+**Terminal 3 — Python RAG**
 ```bash
 cd backend/backend-python
 pip install -r requirements.txt
-python rag_pipeline.py
-# Runs on http://localhost:5001
-# First run downloads AI models (~500MB) — wait for "Ready!"
+py rag_pipeline.py
 ```
 
----
-
-## Step 5 — Start Frontend
-
+**Terminal 4 — Frontend**
 ```bash
 cd frontend
 npm install
 npm run dev
-# Opens at http://localhost:5173
 ```
 
----
-
-## Login Credentials
-
-| Role    | ID       | Password   |
-|---------|----------|------------|
-| Patient | P300     | pass300    |
-| Patient | P301     | pass301    |
-| ...     | P302–P319| pass302–319|
-| Doctor  | D201     | pass201!   |
-| Doctor  | D200–D204| pass200!–204!|
-| Admin   | admin001 | admin123   |
+Open `http://localhost:5173` in your browser.
 
 ---
 
-## What Each Portal Does
+## 🔑 Demo Credentials
 
-### Patient Portal (/patient)
-- See full medical record: disease, medicines, procedures, lab results, appointments
-- Chatbot answers personal questions about their own record
-- Quick-ask chips for common queries
-- File upload section
-
-### Doctor Dashboard (/doctor)
-- See doctor profile, qualifications, departments
-- Clickable patient list with expandable details
-- Chatbot knows all assigned patients
-- Ask: "How many patients?", "Who is admitted?", "Show P307 details"
-
-### Admin Dashboard (/admin-dashboard)
-- Stats cards: total doctors, patients, admitted, discharged etc.
-- Bar charts: patients by hospital and by status
-- AI chatbot with full system access
-- Searchable tables for all doctors and patients
+| Role | ID / Email | Password |
+|---|---|---|
+| Patient | sanjay.reddy@email.com | pass300 |
+| Patient | shreya.gupta@email.com | pass301 |
+| Doctor | D201 | pass201! |
+| Doctor | D200–D204 | pass200!–pass204! |
+| Admin | admin001 | admin123 |
 
 ---
 
-## Troubleshooting
+## 🤖 How the AI Works
 
-**"Cannot reach backend"**
-→ Make sure `node server.js` is running on port 5000
+1. User sends a question from the frontend
+2. React sends it to Node.js `/ask` endpoint with role context
+3. Node.js fetches relevant data from MongoDB and builds context
+4. Context + question is forwarded to Flask RAG pipeline
+5. Flask calls **Anthropic Claude API** with the full context as system prompt
+6. Claude responds naturally and conversationally
+7. Response is returned to the frontend
 
-**"Failed to reach Flask"**
-→ Make sure `python rag_pipeline.py` is running on port 5001
+If the Anthropic API key is not set, the system falls back to an intelligent rule-based response engine.
 
-**Patient not found after registration**
-→ Use the email you registered with to login (not patient ID)
+---
 
-**Models downloading slowly**
-→ First run of `rag_pipeline.py` downloads ~500MB of AI models. Wait for "Ready!" message.
+## 📊 Sample Questions
+
+**Patient asks:**
+- "What is my next appointment?"
+- "What medicines am I taking?"
+- "Tell me about my disease"
+- "Hospital visiting hours?"
+
+**Doctor asks:**
+- "How many patients do I have?"
+- "Which patients are admitted?"
+- "Show upcoming appointments"
+- "Any critical patients?"
+
+**Admin asks:**
+- "Total doctors and patients"
+- "Patients under treatment"
+- "Doctor with most patients"
+- "List all hospitals"
+- "Disease breakdown"
+
+---
+
+## 👩‍💻 Developer
+
+**Navya Kallubavikampa**
+B.Tech Computer Engineering (AI) — Marwadi University, 2026
+CGPA: 7.93
+
+---
+
+## 📄 License
+
+This project is for academic and educational purposes.
